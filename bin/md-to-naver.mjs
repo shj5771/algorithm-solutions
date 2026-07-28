@@ -3,6 +3,7 @@
 //
 //   node bin/md-to-naver.mjs <초안.md>            # HTML을 stdout 으로
 //   node bin/md-to-naver.mjs <초안.md> --code     # 코드블록만 stdout 으로
+//   node bin/md-to-naver.mjs <초안.md> --text     # 태그 벗긴 평문 (클립보드 대체본)
 //
 // 스마트에디터는 <pre> <code> <table> style 을 붙여넣을 때 씹거나 깨뜨린다.
 // 그래서 코드는 본문에서 떼어내 [코드블록 N] 자리표시자로 남기고,
@@ -14,8 +15,9 @@ import { readFileSync } from 'node:fs'
 
 const path = process.argv[2]
 const codeOnly = process.argv.includes('--code')
+const textOnly = process.argv.includes('--text')
 if (!path) {
-  console.error('사용법: md-to-naver.mjs <초안.md> [--code]')
+  console.error('사용법: md-to-naver.mjs <초안.md> [--code|--text]')
   process.exit(2)
 }
 
@@ -106,6 +108,15 @@ if (codeOnly) {
     console.log(b.code)
     console.log()
   }
+} else if (textOnly) {
+  // HTML 플레이버를 못 받는 대상에 붙일 때 쓰는 대체본.
+  const text = out
+    .join('\n')
+    .replace(/<\/(h3|h4|p|li|blockquote)>/g, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+    .replace(/\n{3,}/g, '\n\n')
+  console.log(text.trim())
 } else {
   console.log(out.join('\n'))
 }
