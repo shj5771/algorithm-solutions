@@ -19,6 +19,25 @@ drafts/ 에 초안 마크다운 생성  ← GitHub에서 그대로 읽고 고칠
 초안은 **마크다운**이다. 붙여넣기용 HTML 변환은 `bin/md-to-naver.mjs` 가 그때그때 한다.
 초안 자체를 HTML로 두면 GitHub에서 태그만 보여 검토가 불가능해진다.
 
+### ⚠️ GitHub 페이지에서 드래그 복사하지 마라
+
+초안을 GitHub 웹에서 읽는 건 좋지만, **거기서 드래그해서 복사하면 안 된다.**
+GitHub 다크 테마의 글자색이 인라인 스타일로 따라붙어서 네이버에 흰 글자 / 검은 배경으로 붙는다.
+
+```
+<div class="markdown-heading" style="... color: rgb(240, 246, 252); ...
+                                            ^^^^^^^^^^^^^^^^^^^^^ GitHub 다크 테마 글자색
+```
+
+반드시 터미널에서 `bin/copy-draft.sh` 를 돌려라. 이 스크립트가 올리는 HTML에는
+`color`, `style`, `span`, `class` 가 하나도 없다.
+
+붙여넣기 전에 클립보드를 확인하려면:
+
+```bash
+osascript -e 'the clipboard as «class HTML»' | grep -c 'color' # 0 이어야 정상
+```
+
 ### RTF를 쓰지 않는 이유
 
 처음엔 `textutil` 로 RTF를 만들어 클립보드에 올렸는데, **다크모드일 때 RTF 색상표에
