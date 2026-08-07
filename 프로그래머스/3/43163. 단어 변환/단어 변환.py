@@ -1,28 +1,27 @@
-from collections import deque
-queue = deque()
-
 def solution(begin, target, words):
+    n = len(words)
+    m = len(words[0])
+    min_val= float("inf")
+    visited = [False]*n
     
-    n = len(begin)
-    count_val = 0
-    visited = [False] * (len(words))
-    queue.append((begin,0))
-    
-    while queue:
-        now_word,count_val = queue.popleft()
-        
+    def dfs(now_word,target,num):
+        nonlocal min_val
         if now_word == target:
-            return count_val
-        
-        for k in range(len(words)):
-            same_count=0
-            for j in range(n):
-                if now_word[j] == words[k][j]:                
-                    same_count += 1
-            
-            if same_count ==n-1 and visited[k] == False:
-                visited[k] = True
-                queue.append((words[k],count_val +1))
-                
+            if num<min_val:
+                min_val = num
     
-    return 0
+        for i in range(n):
+            if visited[i]:
+                continue
+                
+            unit_sum = 0
+            for j in range(m):
+                if words[i][j] == now_word[j]:
+                    unit_sum += 1
+        
+            if unit_sum == m-1:
+                visited[i] = True
+                dfs(words[i],target,num+1)
+                visited[i] = False
+    dfs(begin,target,0)
+    return min_val if min_val != float("inf") else 0
